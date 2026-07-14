@@ -1,0 +1,388 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SSC 26 Result Countdown</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: #050508;
+      color: white;
+      font-family: "Inter", sans-serif;
+    }
+
+    /* BACKGROUND GLOW */
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: #6c3cff;
+      border-radius: 50%;
+      filter: blur(180px);
+      opacity: 0.22;
+      top: -200px;
+      left: -150px;
+      animation: moveGlow 8s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: #00d9ff;
+      border-radius: 50%;
+      filter: blur(180px);
+      opacity: 0.15;
+      bottom: -250px;
+      right: -150px;
+      animation: moveGlow 10s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes moveGlow {
+      from {
+        transform: translate(0, 0);
+      }
+
+      to {
+        transform: translate(80px, 50px);
+      }
+    }
+
+    /* MAIN CONTAINER */
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 1000px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      margin-bottom: 25px;
+
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+
+      color: #aaa;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -4px;
+
+      background: linear-gradient(
+        135deg,
+        #ffffff 20%,
+        #a98cff 50%,
+        #62eaff 100%
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      margin-top: 20px;
+      color: #777;
+      font-size: 14px;
+      letter-spacing: 4px;
+    }
+
+    .subtitle span {
+      color: #a98cff;
+      font-weight: 700;
+    }
+
+    /* COUNTDOWN */
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+
+      margin-top: 60px;
+    }
+
+    .time-box {
+      position: relative;
+      padding: 35px 15px;
+
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+    }
+
+    .time-box:hover {
+      transform: translateY(-8px);
+      border-color: rgba(169,140,255,0.5);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .number {
+      display: block;
+
+      font-family: "Space Mono", monospace;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700;
+
+      background: linear-gradient(
+        180deg,
+        #ffffff,
+        #9b8cff
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .label {
+      display: block;
+      margin-top: 10px;
+
+      color: #666;
+      font-size: 11px;
+      font-weight: 600;
+
+      letter-spacing: 4px;
+    }
+
+    /* DATE */
+
+    .result-date {
+      margin-top: 35px;
+      color: #777;
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+
+    .result-date strong {
+      color: #ddd;
+    }
+
+    /* FINISHED MESSAGE */
+
+    #finished {
+      display: none;
+      margin-top: 50px;
+
+      font-size: clamp(2rem, 6vw, 5rem);
+      font-weight: 800;
+
+      background: linear-gradient(
+        90deg,
+        #a98cff,
+        #62eaff
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 650px) {
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: 40px;
+      }
+
+      .time-box {
+        padding: 25px 10px;
+      }
+
+      .subtitle {
+        font-size: 11px;
+        letter-spacing: 2px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="badge">
+      The Final Countdown
+    </div>
+
+    <h1>
+      SSC 26<br>
+      RESULT COUNTDOWN
+    </h1>
+
+    <div class="subtitle">
+      MADE BY <span>PSYKONDO</span>
+    </div>
+
+
+    <div class="countdown" id="countdown">
+
+      <div class="time-box">
+        <span class="number" id="days">00</span>
+        <span class="label">DAYS</span>
+      </div>
+
+      <div class="time-box">
+        <span class="number" id="hours">00</span>
+        <span class="label">HOURS</span>
+      </div>
+
+      <div class="time-box">
+        <span class="number" id="minutes">00</span>
+        <span class="label">MINUTES</span>
+      </div>
+
+      <div class="time-box">
+        <span class="number" id="seconds">00</span>
+        <span class="label">SECONDS</span>
+      </div>
+
+    </div>
+
+
+    <div id="finished">
+      THE RESULTS ARE HERE.
+    </div>
+
+
+    <div class="result-date">
+      RESULT DAY —
+      <strong>20 JULY 2026 · 10:00 AM</strong>
+    </div>
+
+  </main>
+
+
+  <script>
+
+    /*
+      SSC 2026 RESULT TIME
+      20 July 2026
+      10:00 AM
+      Bangladesh Standard Time (UTC+6)
+    */
+
+    const targetDate =
+      new Date("2026-07-20T10:00:00+06:00").getTime();
+
+
+    function updateCountdown() {
+
+      const now = new Date().getTime();
+
+      const distance = targetDate - now;
+
+
+      if (distance <= 0) {
+
+        clearInterval(timer);
+
+        document.getElementById("countdown").style.display = "none";
+
+        document.getElementById("finished").style.display = "block";
+
+        return;
+      }
+
+
+      const days = Math.floor(
+        distance / (1000 * 60 * 60 * 24)
+      );
+
+
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24))
+        / (1000 * 60 * 60)
+      );
+
+
+      const minutes = Math.floor(
+        (distance % (1000 * 60 * 60))
+        / (1000 * 60)
+      );
+
+
+      const seconds = Math.floor(
+        (distance % (1000 * 60))
+        / 1000
+      );
+
+
+      document.getElementById("days").textContent =
+        String(days).padStart(2, "0");
+
+
+      document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
+
+
+      document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
+
+
+      document.getElementById("seconds").textContent =
+        String(seconds).padStart(2, "0");
+
+    }
+
+
+    updateCountdown();
+
+    const timer =
+      setInterval(updateCountdown, 1000);
+
+  </script>
+
+</body>
+</html>
+```
